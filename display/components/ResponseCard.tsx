@@ -36,7 +36,8 @@ import { Input } from "@/components/ui/input";
 import OpenAI from "openai";
 
 import { z } from "zod";
-import { aiResponse } from "@/lib/ollama";
+import { streamAIResponse } from "@/lib/ollama";
+import MarkdownRenderer from "./MarkdownRenderer";
 
 const formSchema = z.object({
   text: z.string().min(1, "Please enter a message"),
@@ -103,9 +104,12 @@ const ResponseCard = () => {
       updated[lastIndex] = [...updated[lastIndex], thinkingMessage];
       return updated;
     });
+
     try {
-      const response = await aiResponse(values.text);
-      // Remove thinking message and add AI response
+      // Start with an empty AI response message
+      let accumulatedResponse = "";
+
+      // Remove thinking message and add initial empty AI response
       setConversations((prev) => {
         const updated = [...prev];
         const lastIndex = updated.length - 1;
@@ -116,13 +120,64 @@ const ResponseCard = () => {
           ...withoutThinking,
           {
             type: "ai",
-            response:
-              response?.message?.content ||
-              "Sorry, I couldn't generate a response.",
+            response: "",
           },
         ];
         return updated;
       });
+
+      // Use streaming response with callback functions
+      await streamAIResponse(
+        values.text,
+        // onChunk callback
+        (chunk: string) => {
+          accumulatedResponse += chunk;
+
+          // Update the AI response in real-time
+          setConversations((prev) => {
+            const updated = [...prev];
+            const lastIndex = updated.length - 1;
+            const messages = [...updated[lastIndex]];
+
+            // Find and update the AI message
+            const aiMessageIndex = messages.findIndex(
+              (msg) => msg.type === "ai"
+            );
+            if (aiMessageIndex !== -1) {
+              messages[aiMessageIndex] = {
+                type: "ai",
+                response: accumulatedResponse,
+              };
+            }
+
+            updated[lastIndex] = messages;
+            return updated;
+          });
+        },
+        // onError callback
+        (error: string) => {
+          console.error("Streaming error:", error);
+          setConversations((prev) => {
+            const updated = [...prev];
+            const lastIndex = updated.length - 1;
+            const withoutThinking = updated[lastIndex].filter(
+              (msg) => msg.type !== "thinking"
+            );
+            updated[lastIndex] = [
+              ...withoutThinking,
+              {
+                type: "ai",
+                response: "Sorry, there was an error processing your request.",
+              },
+            ];
+            return updated;
+          });
+        },
+        // onComplete callback
+        () => {
+          console.log("Streaming completed");
+        }
+      );
     } catch (error) {
       console.error("Error fetching AI response:", error);
       // Remove thinking message and add error response
@@ -248,7 +303,13 @@ const ResponseCard = () => {
                     </div>
                   )}
 
-                  {message.type !== "thinking" && message.response}
+                  {message.type !== "thinking" && (
+                    message.type === "ai" ? (
+                      <MarkdownRenderer content={message.response} />
+                    ) : (
+                      message.response
+                    )
+                  )}
 
                   {message.type === "ai" && (
                     <Tooltip>

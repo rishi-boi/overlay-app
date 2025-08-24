@@ -1,0 +1,92 @@
+/* Additional styles for markdown content */
+.markdown-content {
+  @apply text-sm;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  @apply font-semibold text-white;
+}
+
+.markdown-content p {
+  @apply mb-3;
+}
+
+.markdown-content p:last-child {
+  @apply mb-0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  @apply mb-3;
+}
+
+.markdown-content li {
+  @apply mb-1;
+}
+
+.markdown-content blockquote {
+  @apply border-l-4 border-blue-500 pl-4 py-2 mb-3 bg-gray-800/30 italic;
+}
+
+.markdown-content code {
+  @apply font-mono;
+}
+
+.markdown-content pre {
+  @apply mb-3;
+}
+
+.markdown-content pre code {
+  @apply block bg-gray-900 text-gray-200 p-4 rounded-lg text-sm overflow-x-auto;
+}
+
+.markdown-content table {
+  @apply w-full border-collapse mb-3;
+}
+
+.markdown-content th,
+.markdown-content td {
+  @apply border border-gray-600 px-3 py-2 text-left;
+}
+
+.markdown-content th {
+  @apply bg-gray-800 font-semibold;
+}
+
+.markdown-content tr:nth-child(even) {
+  @apply bg-gray-800/20;
+}
+
+/* Syntax highlighting adjustments for dark theme */
+.markdown-content .hljs {
+  @apply bg-gray-900 !important;
+}
+
+.markdown-content .hljs-keyword,
+.markdown-content .hljs-selector-tag,
+.markdown-content .hljs-title {
+  @apply text-blue-400 !important;
+}
+
+.markdown-content .hljs-string,
+.markdown-content .hljs-attr {
+  @apply text-green-400 !important;
+}
+
+.markdown-content .hljs-number,
+.markdown-content .hljs-literal {
+  @apply text-orange-400 !important;
+}
+
+.markdown-content .hljs-comment {
+  @apply text-gray-500 !important;
+}
+
+.markdown-content .hljs-function {
+  @apply text-purple-400 !important;
+}

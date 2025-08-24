@@ -44,8 +44,8 @@
 }
 
 body {
-  /* background: transparent; */
-  background: url("/background.png") no-repeat center center fixed;
+  background: transparent;
+  /* background: url("/background.png") no-repeat center center fixed; */
   background-size: cover;
   margin: 0;
   padding: 0;
