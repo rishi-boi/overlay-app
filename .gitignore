@@ -1,0 +1,212 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ===============================================
+# OVERLAY-APP PROJECT GITIGNORE
+# Covers both /app and /display directories
+# ===============================================
+
+# Dependencies
+**/node_modules/
+**/.pnp
+**/.pnp.js
+**/.pnp.cjs
+**/jspm_packages/
+
+# Testing
+**/coverage/
+**/.nyc_output
+**/*.lcov
+
+# Next.js (display folder)
+display/.next/
+display/out/
+display/build/
+
+# Node.js/Express (app folder)
+app/build/
+app/dist/
+app/public/uploads/
+
+# Production builds
+**/build/
+**/dist/
+**/out/
+
+# Runtime and process files
+**/pids
+**/*.pid
+**/*.seed
+**/*.pid.lock
+
+# Logs
+**/logs/
+**/*.log
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/lerna-debug.log*
+
+# Environment variables
+**/.env
+**/.env.*
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+!**/.env.example
+
+# Package manager files
+**/.npm
+**/.yarn-integrity
+**/.pnp.*
+**/yarn-error.log
+
+# Caches
+**/.cache/
+**/.parcel-cache/
+**/.eslintcache
+**/.stylelintcache
+**/.rpt2_cache/
+**/.rts2_cache_cjs/
+**/.rts2_cache_es/
+**/.rts2_cache_umd/
+
+# TypeScript
+**/*.tsbuildinfo
+**/next-env.d.ts
+
+# IDEs and Editors
+.vscode/
+!.vscode/extensions.json
+.idea/
+**/*.swp
+**/*.swo
+**/*~
+**/*.suo
+**/*.ntvs*
+**/*.njsproj
+**/*.sln
+**/*.sw?
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Temporary folders
+**/tmp/
+**/temp/
+**/.tmp/
+
+# Database files
+**/*.db
+**/*.sqlite
+**/*.sqlite3
+**/prisma/dev.db*
+**/prisma/schema.prisma.backup
+
+# AI/ML models
+**/*.h5
+**/*.model
+**/*.pkl
+**/*.pt
+**/*.pth
+**/*.onnx
+
+# Backup files
+**/*.backup
+**/*.bak
+**/*.orig
+
+# Deployment
+display/.vercel/
+**/.serverless/
+**/netlify/
+
+# Framework specific
+# Next.js
+display/.next/
+display/out/
+
+# React
+app/build/
+
+# Nuxt.js
+**/.nuxt/
+
+# Gatsby
+**/.cache/
+**/public/
+
+# Vue.js
+**/dist/
+
+# Storybook
+**/.out/
+**/.storybook-out/
+**/storybook-static/
+
+# Testing
+**/coverage/
+**/.coverage/
+**/test-results/
+**/playwright-report/
+**/test-results/
+
+# Documentation
+**/docs/build/
+
+# Miscellaneous
+**/*.tgz
+**/*.tar.gz
+**/.fusebox/
+**/.dynamodb/
+**/.tern-port
+
+# Yarn v2
+**/.yarn/cache
+**/.yarn/unplugged
+**/.yarn/build-state.yml
+**/.yarn/install-state.gz
+
+# Turbo
+**/.turbo/
+
+# Rush
+**/common/temp/
+
+# Local development
+**/local/
+**/dev/
+
+# Security
+**/*.pem
+**/*.key
+**/*.crt
+**/*.p12
+**/*.pfx
+
+# Package manager lock files (uncomment to ignore)
+# **/package-lock.json
+# **/yarn.lock
+# **/pnpm-lock.yaml
+
+# Project specific ignores
+# Add any project-specific files below
+
+# API keys and secrets
+**/secrets/
+**/config/local.json
+
+# User uploads
+**/uploads/
+**/media/
+
+# Generated files
+**/generated/
+**/auto-generated/

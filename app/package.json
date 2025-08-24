@@ -1,0 +1,39 @@
+{
+    "name": "rishi-desktop-overlay",
+    "version": "1.0.0",
+    "description": "RISHI Desktop Overlay App",
+    "main": "app.js",
+    "scripts": {
+        "start": "electron app.js",
+        "dev": "electron app.js",
+        "build": "electron-builder"
+    },
+    "dependencies": {
+        "electron": "^27.3.11",
+        "lucide": "^0.540.0",
+        "lucide-react": "^0.540.0"
+    },
+    "devDependencies": {
+        "electron-builder": "^24.6.4"
+    },
+    "build": {
+        "appId": "com.rishi.desktop.overlay",
+        "productName": "RISHI Overlay",
+        "directories": {
+            "output": "dist"
+        },
+        "files": [
+            "app.js",
+            "package.json"
+        ],
+        "win": {
+            "target": "nsis"
+        },
+        "mac": {
+            "target": "dmg"
+        },
+        "linux": {
+            "target": "AppImage"
+        }
+    }
+}
