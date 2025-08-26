@@ -1,18 +1,16 @@
 "use client";
 import {
   ArrowRight,
-  Check,
   Copy,
-  SendHorizonal,
-  Sparkle,
   WandSparkles,
   XCircle,
   Loader2,
   ChevronLeft,
   ChevronRight,
+  Trash2,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import { motion, useAnimation, useDragControls } from "framer-motion";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -22,50 +20,61 @@ import {
 import { Checkbox } from "./ui/checkbox";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import OpenAI from "openai";
-
 import { z } from "zod";
-import { streamAIResponse } from "@/lib/ollama";
 import MarkdownRenderer from "./MarkdownRenderer";
+// import { useAIChat } from "@/lib/hooks/useAIResponse";
+import { useChatStore } from "@/lib/store/useStore";
 
 const formSchema = z.object({
   text: z.string().min(1, "Please enter a message"),
   isWeb: z.boolean(),
 });
 
-interface ChatMessage {
-  type: "user" | "ai" | "thinking";
-  response: string;
-}
-
-type Conversation = ChatMessage[];
-// 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
 const ResponseCard = () => {
   const [index, setIndex] = useState(0);
-  const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [isThinking, setIsThinking] = useState(false);
+  const {
+    conversations,
+    isThinking,
+    sendMessageEfficient, // Use the efficient method
+    clearChatHistory,
+  } = useChatStore();
 
   // Ensure index stays within bounds
   useEffect(() => {
+    setIndex(conversations.length - 1);
     if (conversations.length > 0 && index >= conversations.length) {
       setIndex(conversations.length - 1);
     } else if (conversations.length === 0) {
       setIndex(0);
     }
+  }, [conversations, index]);
+
+  // Keyboard Shortcuts
+  useEffect(() => {
+    const keyDownHandler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key == "ArrowRight") {
+        setIndex((prev) => Math.min(conversations.length - 1, prev + 1));
+      } else if (e.ctrlKey && e.key == "ArrowLeft") {
+        setIndex((prev) => Math.max(0, prev - 1));
+      }
+    };
+    document.addEventListener("keydown", keyDownHandler);
+
+    // clean up
+    return () => {
+      document.removeEventListener("keydown", keyDownHandler);
+    };
   }, [conversations.length, index]);
 
-  // 1. Define your form.
+  // Defining Form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -74,132 +83,21 @@ const ResponseCard = () => {
     },
   });
 
-  // 2. Define a submit handler.
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!values.text.trim()) return;
-    // Create new conversation with user message
-    const userMessage: ChatMessage = {
-      type: "user",
-      response: values.text,
-    };
-    const newConversation: Conversation = [userMessage];
-    setConversations((prev) => {
-      const updated = [...prev, newConversation];
-      // Set index to the last conversation (newly added)
-      setIndex(updated.length - 1);
-      return updated;
-    });
-    // Clear the input
-    form.reset({ text: "", isWeb: values.isWeb });
-    // Show thinking state
-    setIsThinking(true);
-    const thinkingMessage: ChatMessage = {
-      type: "thinking",
-      response: "Thinking...",
-    };
-    // Add thinking message to the latest conversation
-    setConversations((prev) => {
-      const updated = [...prev];
-      const lastIndex = updated.length - 1;
-      updated[lastIndex] = [...updated[lastIndex], thinkingMessage];
-      return updated;
-    });
-
-    try {
-      // Start with an empty AI response message
-      let accumulatedResponse = "";
-
-      // Remove thinking message and add initial empty AI response
-      setConversations((prev) => {
-        const updated = [...prev];
-        const lastIndex = updated.length - 1;
-        const withoutThinking = updated[lastIndex].filter(
-          (msg) => msg.type !== "thinking"
-        );
-        updated[lastIndex] = [
-          ...withoutThinking,
-          {
-            type: "ai",
-            response: "",
-          },
-        ];
-        return updated;
-      });
-
-      // Use streaming response with callback functions
-      await streamAIResponse(
-        values.text,
-        // onChunk callback
-        (chunk: string) => {
-          accumulatedResponse += chunk;
-
-          // Update the AI response in real-time
-          setConversations((prev) => {
-            const updated = [...prev];
-            const lastIndex = updated.length - 1;
-            const messages = [...updated[lastIndex]];
-
-            // Find and update the AI message
-            const aiMessageIndex = messages.findIndex(
-              (msg) => msg.type === "ai"
-            );
-            if (aiMessageIndex !== -1) {
-              messages[aiMessageIndex] = {
-                type: "ai",
-                response: accumulatedResponse,
-              };
-            }
-
-            updated[lastIndex] = messages;
-            return updated;
-          });
-        },
-        // onError callback
-        (error: string) => {
-          console.error("Streaming error:", error);
-          setConversations((prev) => {
-            const updated = [...prev];
-            const lastIndex = updated.length - 1;
-            const withoutThinking = updated[lastIndex].filter(
-              (msg) => msg.type !== "thinking"
-            );
-            updated[lastIndex] = [
-              ...withoutThinking,
-              {
-                type: "ai",
-                response: "Sorry, there was an error processing your request.",
-              },
-            ];
-            return updated;
-          });
-        },
-        // onComplete callback
-        () => {
-          console.log("Streaming completed");
-        }
-      );
-    } catch (error) {
-      console.error("Error fetching AI response:", error);
-      // Remove thinking message and add error response
-      setConversations((prev) => {
-        const updated = [...prev];
-        const lastIndex = updated.length - 1;
-        const withoutThinking = updated[lastIndex].filter(
-          (msg) => msg.type !== "thinking"
-        );
-        updated[lastIndex] = [
-          ...withoutThinking,
-          {
-            type: "ai",
-            response: "Sorry, there was an error processing your request.",
-          },
-        ];
-        return updated;
-      });
-    } finally {
-      setIsThinking(false);
-    }
+  // Focus input on mount (default focus)
+  useEffect(() => {
     form.setFocus("text");
+  }, [form]);
+
+  // Handling Form Submission
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    form.reset();
+    const { text } = values;
+    if (text) {
+      setIndex(conversations.length);
+      const res = await sendMessageEfficient(text); // Use efficient method
+      console.log(res);
+      form.setFocus("text");
+    }
   }
   return (
     <motion.div
@@ -259,6 +157,17 @@ const ResponseCard = () => {
             </Tooltip>
             <Tooltip>
               <TooltipTrigger>
+                <Trash2
+                  className="size-3 cursor-pointer text-gray-400 hover:text-red-400 transition-colors"
+                  onClick={clearChatHistory}
+                />
+              </TooltipTrigger>
+              <TooltipContent className="tooltip">
+                Clear chat history
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger>
                 <XCircle className="size-3 cursor-pointer text-gray-400" />
               </TooltipTrigger>
               <TooltipContent className="tooltip">close</TooltipContent>
@@ -267,7 +176,7 @@ const ResponseCard = () => {
         </div>
       )}
       {/* CHAT */}
-      <div className="max-h-80 overflow-y-auto">
+      <div className="max-h-1/3  overflow-y-auto">
         <div className="mb-4">
           {conversations.length > 0 &&
             conversations[index] &&
@@ -303,17 +212,16 @@ const ResponseCard = () => {
                     </div>
                   )}
 
-                  {message.type !== "thinking" && (
-                    message.type === "ai" ? (
+                  {message.type !== "thinking" &&
+                    (message.type === "ai" ? (
                       <MarkdownRenderer content={message.response} />
                     ) : (
                       message.response
-                    )
-                  )}
+                    ))}
 
-                  {message.type === "ai" && (
+                  {message.type !== "thinking" && message.type == "ai" && (
                     <Tooltip>
-                      <TooltipTrigger>
+                      <TooltipTrigger asChild>
                         <button className="flex mt-2 text-xs font-bold items-center gap-1 bg-gray-400/40 rounded-xl py-1 px-2 hover:bg-gray-400/60 transition-colors">
                           Show in detail{" "}
                           <ArrowRight className="size-3 font-bold" />
@@ -348,6 +256,7 @@ const ResponseCard = () => {
                 <FormItem className="w-full">
                   <FormControl>
                     <input
+                      aria-disabled={isThinking}
                       autoComplete="off"
                       className="border-none outline-none bg-transparent"
                       placeholder="Ask Anything..."
@@ -379,7 +288,7 @@ const ResponseCard = () => {
                 )}
               />
               <Tooltip>
-                <TooltipTrigger>
+                <TooltipTrigger asChild>
                   <button
                     type="submit"
                     disabled={isThinking}

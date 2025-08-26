@@ -2,11 +2,11 @@ import { icons } from "lucide-react";
 
 export const buttons = [
   {
-    name: "Hear",
+    name: "hear",
     icon: icons.AudioLines,
   },
   {
-    name: "Ask",
+    name: "ask",
     icon: icons.MessageCircle,
   },
 ];

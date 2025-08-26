@@ -1,16 +1,53 @@
 "use client";
 import { buttons } from "@/constants";
-import { GripVertical, Home, SlidersHorizontal } from "lucide-react";
-import React, { useState } from "react";
+import { Disc, GripVertical, Home, SlidersHorizontal } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { motion, useAnimation, useDragControls } from "framer-motion";
 import ResponseCard from "@/components/ResponseCard";
 import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
 import { Tooltip } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+
+interface ToggleProps {
+  hear: boolean;
+  ask: boolean;
+  controls: boolean;
+  dashboard: boolean;
+}
 
 const Page = () => {
   const controls = useAnimation();
   const dragControls = useDragControls();
   const [currentPosition, setCurrentPosition] = useState({ x: 0, y: 0 });
+  const [toggle, setToggle] = useState<ToggleProps>({
+    hear: false,
+    ask: false,
+    controls: false,
+    dashboard: false,
+  });
+
+  // Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.ctrlKey) {
+        switch (event.key) {
+          case "a":
+            event.preventDefault();
+            setToggle((prev) => ({ ...prev, ask: !prev.ask }));
+            break;
+          case "h":
+            event.preventDefault();
+            setToggle((prev) => ({ ...prev, hear: !prev.hear }));
+            break;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   // Define snap positions and snap range
   const getSnapPositions = () => {
@@ -120,17 +157,29 @@ const Page = () => {
         >
           {buttons.map((button, index) => (
             <div
-              className={`relative flex justify-center items-center text-xs z-10 px-4 py-1 rounded-lg cursor-pointer duration-200 hover:text-white transition-all ${
-                button.name === "Hear"
+              onClick={() =>
+                setToggle((prev) => ({
+                  ...prev,
+                  [button.name as keyof ToggleProps]:
+                    !prev[button.name as keyof ToggleProps],
+                }))
+              }
+              className={`relative flex justify-center items-center text-xs z-10 px-4 py-1 rounded-lg cursor-pointer duration-200 hover:text-white transition-all capitalize ${
+                button.name === "hear"
                   ? "bg-primary hover:bg-primary/70"
                   : "text-gray-300"
               }`}
               key={index}
             >
-              {button.icon && (
-                <button.icon className="mr-2 inline-block size-4" />
-              )}
-              {button.name}
+              {button.icon &&
+                (button.name == "hear" && toggle.hear ? (
+                  <Disc className="mr-2 inline-block size-4 animate-pulse transition-all" />
+                ) : (
+                  <button.icon className="mr-2 inline-block size-4" />
+                ))}
+              {button.name === "hear" && toggle.hear
+                ? "Listening..."
+                : button.name}
             </div>
           ))}
           <div className="flex items-center justify-center gap-2 mx-2">
@@ -175,9 +224,7 @@ const Page = () => {
           </Tooltip>
         </motion.div>
       </motion.nav>
-      <div>
-        <ResponseCard />
-      </div>
+      <div>{toggle.ask && <ResponseCard />}</div>
     </motion.div>
   );
 };
