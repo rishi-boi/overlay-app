@@ -1,53 +1,21 @@
 "use client";
-import { buttons } from "@/constants";
-import { Disc, GripVertical, Home, SlidersHorizontal } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import { motion, useAnimation, useDragControls } from "framer-motion";
-import ResponseCard from "@/components/ResponseCard";
-import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
-import { Tooltip } from "@/components/ui/tooltip";
+import Navbar from "@/components/shared/Navbar";
+import ResponseCard from "@/components/shared/ResponseCard";
+import { useShortcuts } from "@/lib/hooks/useShortcuts";
 import { cn } from "@/lib/utils";
-
-interface ToggleProps {
-  hear: boolean;
-  ask: boolean;
-  controls: boolean;
-  dashboard: boolean;
-}
+import {
+  motion,
+  useAnimation,
+  useDragControls,
+  AnimatePresence,
+} from "framer-motion";
+import { useState } from "react";
 
 const Page = () => {
+  const { toggle } = useShortcuts();
   const controls = useAnimation();
   const dragControls = useDragControls();
   const [currentPosition, setCurrentPosition] = useState({ x: 0, y: 0 });
-  const [toggle, setToggle] = useState<ToggleProps>({
-    hear: false,
-    ask: false,
-    controls: false,
-    dashboard: false,
-  });
-
-  // Shortcuts
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.ctrlKey) {
-        switch (event.key) {
-          case "a":
-            event.preventDefault();
-            setToggle((prev) => ({ ...prev, ask: !prev.ask }));
-            break;
-          case "h":
-            event.preventDefault();
-            setToggle((prev) => ({ ...prev, hear: !prev.hear }));
-            break;
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   // Define snap positions and snap range
   const getSnapPositions = () => {
@@ -131,100 +99,31 @@ const Page = () => {
   const startDrag = (event: React.PointerEvent) => {
     dragControls.start(event);
   };
-
   return (
     <motion.div
-      className="relative h-screen flex flex-col items-center w-full mt-8 gap-3"
       drag
       dragMomentum={false}
       dragElastic={0.1}
       animate={controls}
       onDragEnd={handleDragEnd}
-      whileDrag={{ scale: 1.05 }}
+      // whileDrag={{ scale: 1.05 }}
       style={{ x: currentPosition.x, y: currentPosition.y }}
       dragControls={dragControls}
       dragListener={false}
+      className={cn(
+        "flex flex-col w-screen justify-center transition-all",
+        toggle.hide ? "opacity-0 -translate-y-5" : "opacity-100 translate-y-0"
+      )}
+      // initial={{ opacity: 0, translateY: "20px", translateZ: "20px" }}
+      // exit={{ opacity: 0, translateY: "20px", translateZ: "20px" }}
+      // transition={{ duration: 0.2, ease: "easeInOut" }}
     >
-      {/* Snap Zone Indicator (LATER) */}
-      {/* <div className="absolute left-1/2 top-0 -translate-x-1/2 h-screen outline bg-primary outline-dashed opacity-70" /> */}
-
-      {/* NAVIGATION */}
-      <motion.nav className="flex items-center gap-2">
-        <motion.div
-          initial={{ scale: 0.6, y: -20, opacity: 0 }}
-          animate={{ scale: 1, y: 0, opacity: 1 }}
-          className=" gap-2 flex relative box"
-        >
-          {buttons.map((button, index) => (
-            <div
-              onClick={() =>
-                setToggle((prev) => ({
-                  ...prev,
-                  [button.name as keyof ToggleProps]:
-                    !prev[button.name as keyof ToggleProps],
-                }))
-              }
-              className={`relative flex justify-center items-center text-xs z-10 px-4 py-1 rounded-lg cursor-pointer duration-200 hover:text-white transition-all capitalize ${
-                button.name === "hear"
-                  ? "bg-primary hover:bg-primary/70"
-                  : "text-gray-300"
-              }`}
-              key={index}
-            >
-              {button.icon &&
-                (button.name == "hear" && toggle.hear ? (
-                  <Disc className="mr-2 inline-block size-4 animate-pulse transition-all" />
-                ) : (
-                  <button.icon className="mr-2 inline-block size-4" />
-                ))}
-              {button.name === "hear" && toggle.hear
-                ? "Listening..."
-                : button.name}
-            </div>
-          ))}
-          <div className="flex items-center justify-center gap-2 mx-2">
-            <Tooltip>
-              <TooltipTrigger>
-                <SlidersHorizontal className="size-4 cursor-pointer text-gray-300 hover:text-white" />
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <div className="tooltip">controls</div>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger>
-                <div
-                  onPointerDown={startDrag}
-                  className="size-4 cursor-grab text-gray-300 hover:text-white active:cursor-grabbing"
-                  style={{ touchAction: "none" }}
-                >
-                  <GripVertical className="size-4" />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="bottom">
-                <div className="tooltip">drag</div>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </motion.div>
-        <motion.div
-          initial={{ scale: 0, y: -20 }}
-          animate={{ scale: 1, y: 0 }}
-          className="flex justify-center gap-2 rounded-2xl relative bg-background/40 p-1 border border-white/20"
-        >
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="relative flex justify-center items-center text-xs z-10 px-4 py-1 rounded-lg cursor-pointer duration-200 hover:text-white transition-all">
-                <Home className="size-4" />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <div className="tooltip">home</div>
-            </TooltipContent>
-          </Tooltip>
-        </motion.div>
-      </motion.nav>
-      <div>{toggle.ask && <ResponseCard />}</div>
+      <Navbar startDrag={startDrag} />
+      <div className="flex items-center justify-center">
+        <AnimatePresence mode="wait">
+          {toggle.ask && <ResponseCard key="response-card" />}
+        </AnimatePresence>
+      </div>
     </motion.div>
   );
 };
