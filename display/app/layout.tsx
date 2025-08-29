@@ -16,7 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head />
-      <body>
+      <body className="select-none">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

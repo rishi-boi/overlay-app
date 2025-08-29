@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 body {
+  /* background: transparent; */
   background-color: beige;
   overflow: hidden;
 }

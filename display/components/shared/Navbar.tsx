@@ -6,15 +6,16 @@ import { Grip, SlidersHorizontal } from "lucide-react";
 import { SHORTCUTS } from "@/constants/shortcuts";
 import { navLinks } from "@/constants";
 import Image from "next/image";
-import useChatStore from "@/lib/store/useChatStore";
+import useChatStore, { ToggleState } from "@/lib/store/useChatStore";
 import { cn } from "@/lib/utils";
+import { set } from "zod";
 
 const Navbar = ({
   startDrag,
 }: {
   startDrag: (event: React.PointerEvent) => void;
 }) => {
-  const { toggle } = useChatStore();
+  const { toggle, setToggle } = useChatStore();
   // Shortcut
 
   return (
@@ -29,6 +30,14 @@ const Navbar = ({
         {navLinks.map((link, index) => (
           <Tooltip key={index}>
             <TooltipTrigger
+              onClick={() =>
+                setToggle(
+                  link.name as keyof ToggleState,
+                  !toggle[
+                    link.name as keyof ToggleState
+                  ] as ToggleState[keyof ToggleState]
+                )
+              }
               className={cn(
                 "relative flex justify-center items-center text-xs z-10 px-4 py-1 rounded-lg cursor-pointer duration-200 hover:text-white transition-all capitalize gap-1",
                 link.name === "hear"
@@ -59,7 +68,7 @@ const Navbar = ({
       </motion.div>
       {/* Profile Picture */}
       <Image
-        className="rounded-full size-9 border-2 border-gray-800/40"
+        className="rounded-full size-8 border-2 border-gray-800/40"
         src={"/profile.gif"}
         width={100}
         height={100}

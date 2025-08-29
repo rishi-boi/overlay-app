@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface ToggleState {
+export interface ToggleState {
   ask: boolean;
   hear: boolean;
   hide: boolean;
+  inDetail: boolean;
 }
 
 interface ChatStore {
@@ -13,14 +14,16 @@ interface ChatStore {
   resetToggle: () => void;
 }
 
+const defaultValues = {
+  ask: false,
+  hear: false,
+  hide: false,
+  inDetail: false,
+};
 const useChatStore = create<ChatStore>()(
   persist(
     (set) => ({
-      toggle: {
-        ask: false,
-        hear: false,
-        hide: false,
-      },
+      toggle: defaultValues,
       setToggle: (key, value) =>
         set((state) => ({
           toggle: {
@@ -30,11 +33,7 @@ const useChatStore = create<ChatStore>()(
         })),
       resetToggle: () =>
         set(() => ({
-          toggle: {
-            ask: false,
-            hear: false,
-            hide: false,
-          },
+          toggle: defaultValues,
         })),
     }),
     {

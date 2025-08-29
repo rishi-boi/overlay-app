@@ -1,0 +1,206 @@
+/* Custom markdown styles for InDetail component */
+.prose {
+  color: #e5e7eb;
+  line-height: 1.7;
+}
+
+.prose h1 {
+  color: #f9fafb;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #374151;
+  padding-bottom: 0.5rem;
+}
+
+.prose h2 {
+  color: #f3f4f6;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose h3 {
+  color: #f3f4f6;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose p {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose ul,
+.prose ol {
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.prose li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.prose li > p {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.prose strong {
+  color: #f9fafb;
+  font-weight: 600;
+}
+
+.prose em {
+  color: #d1d5db;
+  font-style: italic;
+}
+
+.prose pre {
+  background-color: #1f2937;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-x: auto;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose code {
+  background-color: #374151;
+  color: #f9fafb;
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+    "Liberation Mono", Menlo, monospace;
+}
+
+.prose pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+}
+
+.prose blockquote {
+  border-left: 4px solid #3b82f6;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+  color: #d1d5db;
+  background-color: #1f2937;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid #374151;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.prose th {
+  background-color: #374151;
+  color: #f9fafb;
+  font-weight: 600;
+  padding: 0.75rem;
+  text-align: left;
+  border: 1px solid #4b5563;
+}
+
+.prose td {
+  padding: 0.75rem;
+  border: 1px solid #4b5563;
+}
+
+.prose tr:nth-child(even) {
+  background-color: #1f2937;
+}
+
+.prose a {
+  color: #60a5fa;
+  text-decoration: underline;
+}
+
+.prose a:hover {
+  color: #93c5fd;
+}
+
+/* Syntax highlighting for code blocks */
+.hljs {
+  background: #1f2937 !important;
+  color: #e5e7eb !important;
+  padding: 1rem !important;
+  border-radius: 0.5rem !important;
+}
+
+.hljs-keyword {
+  color: #c678dd !important;
+}
+
+.hljs-string {
+  color: #98c379 !important;
+}
+
+.hljs-number {
+  color: #d19a66 !important;
+}
+
+.hljs-comment {
+  color: #5c6370 !important;
+  font-style: italic;
+}
+
+.hljs-function {
+  color: #61dafb !important;
+}
+
+.hljs-variable {
+  color: #e06c75 !important;
+}
+
+.hljs-title {
+  color: #61dafb !important;
+}
+
+.hljs-type {
+  color: #e5c07b !important;
+}
+
+.hljs-built_in {
+  color: #e06c75 !important;
+}
+
+.hljs-selector-class,
+.hljs-selector-id {
+  color: #e5c07b !important;
+}
+
+.hljs-attribute {
+  color: #d19a66 !important;
+}
+
+.hljs-tag {
+  color: #e06c75 !important;
+}
+
+.hljs-name {
+  color: #e06c75 !important;
+}

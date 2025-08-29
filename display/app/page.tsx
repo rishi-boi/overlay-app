@@ -1,4 +1,5 @@
 "use client";
+import InDetail from "@/components/shared/InDetail";
 import Navbar from "@/components/shared/Navbar";
 import ResponseCard from "@/components/shared/ResponseCard";
 import { useShortcuts } from "@/lib/hooks/useShortcuts";
@@ -110,18 +111,18 @@ const Page = () => {
       style={{ x: currentPosition.x, y: currentPosition.y }}
       dragControls={dragControls}
       dragListener={false}
-      className={cn(
-        "flex flex-col w-screen justify-center transition-all",
-        toggle.hide ? "opacity-0 -translate-y-5" : "opacity-100 translate-y-0"
-      )}
+      // className={cn(
+      //   "flex flex-col w-screen justify-center transition-all",
+      //   toggle.hide ? "opacity-0 -translate-y-5" : "opacity-100 translate-y-0"
+      // )}
       // initial={{ opacity: 0, translateY: "20px", translateZ: "20px" }}
       // exit={{ opacity: 0, translateY: "20px", translateZ: "20px" }}
       // transition={{ duration: 0.2, ease: "easeInOut" }}
     >
       <Navbar startDrag={startDrag} />
-      <div className="flex items-center justify-center">
+      <div className="flex items-center gap-2 justify-center">
         <AnimatePresence mode="wait">
-          {toggle.ask && <ResponseCard key="response-card" />}
+          <ResponseCard key="response-card" />
         </AnimatePresence>
       </div>
     </motion.div>

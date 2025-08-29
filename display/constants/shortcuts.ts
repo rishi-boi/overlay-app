@@ -5,4 +5,5 @@ export const SHORTCUTS = {
   PREVIOUS_CHAT: "ctrl+left",
   NEXT_CHAT: "ctrl+right",
   HIDE: "ctrl+shift+backslash",
+  IN_DETAIL: "ctrl+d",
 };

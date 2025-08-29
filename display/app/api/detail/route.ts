@@ -3,7 +3,7 @@ import { ollama } from "ollama-ai-provider-v2";
 
 export async function POST(req: Request) {
   try {
-    const { messages }: { messages: UIMessage[] } = await req.json();
+    const { question }: { question: string } = await req.json();
 
     const result = streamText({
       model: ollama("llama3.2:1b"),
@@ -26,13 +26,14 @@ export async function POST(req: Request) {
               - NEVER use hyphens or dashes, split into shorter sentences or use commas
               - Avoid unnecessary adjectives or dramatic emphasis unless it adds clear value
               `,
-      messages: convertToModelMessages(messages),
+      prompt: question,
     });
-    return result.toUIMessageStreamResponse();
-  } catch {
-    console.error("❌ Backend error:");
+    return result.toTextStreamResponse();
+  } catch (error) {
+    console.error("❌ Backend error:", error);
     return new Response(JSON.stringify({ error: "Internal Server Error" }), {
       status: 500,
+      headers: { "Content-Type": "application/json" },
     });
   }
 }
